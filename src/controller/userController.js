@@ -1,5 +1,4 @@
 const express = require("express");
-const mongoose = require("mongoose")
 const jwt = require("jsonwebtoken")
 const userSchema = require("../model/userModel")
 const studentSchema = require("../model/studentModel")
@@ -9,8 +8,7 @@ const { findOneAndUpdate, findOne } = require("../model/studentModel");
 
 const createUser = async function (req, res) {
     try {
-         const data=req.body
-        console.log(Object.keys(data).length == 0)
+        const data = req.body
         if (Object.keys(data).length == 0) {
             return res.status(404).send({ status: false, message: "data must be in body" })
         }
@@ -22,15 +20,13 @@ const createUser = async function (req, res) {
             return res.status(400).send({ status: false, message: "name must be string" })
         }
 
-
         if (!userName) {
             return res.status(404).send({ status: false, message: "userName must be in body" })
         }
         if (!str(userName)) {
             return res.status(400).send({ status: false, message: "userName must be string" })
         }
-
-
+        
         if (!password) {
             return res.status(404).send({ status: false, message: "password must be in body" })
         }
@@ -87,7 +83,7 @@ const logInUser = async function (req, res) {
         const token = jwt.sign({ userName: getUser.userName }, "backendTaskWithAshishTripathi");
 
 
-        const studentlist = await studentSchema.find({ user: userName, isDeleted: false }).select({ _id: 0, isDeleted: 0, user: 0, _id: 0, createdAt: 0, updatedAt: 0,__v:0 }).sort({ name: 1 })
+        const studentlist = await studentSchema.find({ user: userName, isDeleted: false }).select({ _id: 0, isDeleted: 0, user: 0, _id: 0, createdAt: 0, updatedAt: 0, __v: 0 }).sort({ name: 1 })
 
         return res.status(200).send({ status: true, message: studentlist, token: token })
 
@@ -184,7 +180,7 @@ const EditStudent = async function (req, res) {
             return res.status(404).send({ status: false, message: "there is no any data in the body to updated" })
         }
 
-        const { name, subject, newName,newSubject,marks } = data
+        const { name, subject, newName, newSubject, marks } = data
 
         if (!name) {
             return res.status(404).send({ status: false, message: "name must be in body" })
@@ -223,37 +219,37 @@ const EditStudent = async function (req, res) {
             }
         }
 
-       
-        const searchStudent={
-            user:userName,
-            name:name,
-            subject:subject,
-            isDeleted:false
-        }
-        
-        const checkData={
-            user:userName,
-            name:newName,
-            subject:newSubject
-        }
-        if(!newName){
-            checkData["name"]=name
-        }
-        if(!newSubject){
-            checkData['subject']=subject
+
+        const searchStudent = {
+            user: userName,
+            name: name,
+            subject: subject,
+            isDeleted: false
         }
 
-        
-        const checkAlreadyUser=await studentSchema.findOne(checkData)
-        if(checkAlreadyUser){
-            return res.status(400).send({status:false,message:"new name and subject already exist"})
+        const checkData = {
+            user: userName,
+            name: newName,
+            subject: newSubject
+        }
+        if (!newName) {
+            checkData["name"] = name
+        }
+        if (!newSubject) {
+            checkData['subject'] = subject
         }
 
-      const updateData=await studentSchema.findOneAndUpdate(searchStudent,{name:newName,subject:newSubject,marks:marks},{new:true}).select({ _id: 0, createdAt: 0, updatedAt: 0, isDeleted: 0, __v: 0, user: 0 })
-    
-      if(updateData==null) {
-        return res.status(404).send({status:false,message:"student did not found"})
-      }
+
+        const checkAlreadyUser = await studentSchema.findOne(checkData)
+        if (checkAlreadyUser) {
+            return res.status(400).send({ status: false, message: "new name and subject already exist" })
+        }
+
+        const updateData = await studentSchema.findOneAndUpdate(searchStudent, { name: newName, subject: newSubject, marks: marks }, { new: true }).select({ _id: 0, createdAt: 0, updatedAt: 0, isDeleted: 0, __v: 0, user: 0 })
+
+        if (updateData == null) {
+            return res.status(404).send({ status: false, message: "student did not found" })
+        }
 
 
         return res.status(200).send({ status: true, message: updateData })
@@ -271,20 +267,20 @@ const EditStudent = async function (req, res) {
 const viewData = async function (req, res) {
     try {
         const data = req.query
-        const userName=req.userName
-    
-        const searchData={
+        const userName = req.userName
+
+        const searchData = {
             user: userName,
-            isDeleted: false ,
+            isDeleted: false,
 
         }
-        if(data.name) searchData.name=data.name
-        if(data.subject) searchData.subject=data.subject
-        
-        const studentlist = await studentSchema.find(searchData).select({ _id: 0, isDeleted: 0, user: 0 , createdAt: 0, updatedAt: 0, __v: 0}).sort({name:1})
+        if (data.name) searchData.name = data.name
+        if (data.subject) searchData.subject = data.subject
 
-        if(studentlist.length==0) return res.status(404).send({status:false,message:"student did not found"})
-        return res.status(200).send({ status: true, message: studentlist})
+        const studentlist = await studentSchema.find(searchData).select({ _id: 0, isDeleted: 0, user: 0, createdAt: 0, updatedAt: 0, __v: 0 }).sort({ name: 1 })
+
+        if (studentlist.length == 0) return res.status(404).send({ status: false, message: "student did not found" })
+        return res.status(200).send({ status: true, message: studentlist })
 
     }
     catch (error) {
@@ -298,13 +294,13 @@ const viewData = async function (req, res) {
 const deleteStudent = async function (req, res) {
     try {
         const data = req.body
-        const userName=req.userName
-    
+        const userName = req.userName
+
         if (Object.keys(data).length == 0) {
             return res.status(404).send({ status: false, message: "data must be in body" })
         }
 
-        const { name, subject} = data
+        const { name, subject } = data
         if (!name) {
             return res.status(404).send({ status: false, message: "name must be in body" })
         }
@@ -315,11 +311,11 @@ const deleteStudent = async function (req, res) {
         if (!subject) {
             return res.status(404).send({ status: false, message: "subject must be in body" })
         }
-       
-        const updateData=await studentSchema.findOneAndUpdate({user:userName,name:name,subject:subject,isDeleted:false},{isDeleted:true})
 
-        if(updateData==null) return res.status(400).send({status:false,message:"student did not found"})
-        res.status(200).send({status:true,message:"data has been deleted"})
+        const updateData = await studentSchema.findOneAndUpdate({ user: userName, name: name, subject: subject, isDeleted: false }, { isDeleted: true })
+
+        if (updateData == null) return res.status(400).send({ status: false, message: "student did not found" })
+        res.status(200).send({ status: true, message: "data has been deleted" })
     }
     catch (error) {
         res.status(500).send({ status: false, message: error.message })
@@ -327,4 +323,4 @@ const deleteStudent = async function (req, res) {
 }
 
 
-module.exports = { createUser, logInUser, addStudent ,EditStudent,viewData ,deleteStudent}
+module.exports = { createUser, logInUser, addStudent, EditStudent, viewData, deleteStudent }
