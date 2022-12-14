@@ -4,7 +4,7 @@ const mid=require("../mid/mid")
 const router=express.Router()
 
 router.get("/student",function(req,res){
-    res.send("I am ashish")
+    res.send("I am Rana")
 })
 
 
@@ -14,6 +14,8 @@ router.post("/student/add",mid,user.addStudent)
 router.put("/student/edit",mid,user.EditStudent)
 router.get("/student/viewList",mid,user.viewData)
 router.delete("/student/delete",mid,user.deleteStudent)
+
+
 module.exports=router
 
 

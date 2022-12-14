@@ -1,16 +1,15 @@
-const express = require("express");
+
 const jwt = require("jsonwebtoken")
 const userSchema = require("../model/userModel")
 const studentSchema = require("../model/studentModel")
 const { str, num, pass } = require("../validation/valid");
-const { json } = require("express");
-const { findOneAndUpdate, findOne } = require("../model/studentModel");
+
 
 const createUser = async function (req, res) {
     try {
         const data = req.body
         if (Object.keys(data).length == 0) {
-            return res.status(404).send({ status: false, message: "data must be in body" })
+            return res.status(404).send({ status: false, message: "data must be present in body" })
         }
         const { name, userName, password } = data
         if (!name) {
@@ -80,12 +79,12 @@ const logInUser = async function (req, res) {
             return res.status(400).send({ status: false, message: "user does not exist" })
         }
 
-        const token = jwt.sign({ userName: getUser.userName }, "backendTaskWithAshishTripathi");
+        const token = jwt.sign({ userName: getUser.userName }, "backendTask");
 
 
-        const studentlist = await studentSchema.find({ user: userName, isDeleted: false }).select({ _id: 0, isDeleted: 0, user: 0, _id: 0, createdAt: 0, updatedAt: 0, __v: 0 }).sort({ name: 1 })
+       // const studentlist = await studentSchema.find({ user: userName, isDeleted: false }).select({ _id: 0, isDeleted: 0, user: 0, _id: 0, createdAt: 0, updatedAt: 0, __v: 0 }).sort({ name: 1 })
 
-        return res.status(200).send({ status: true, message: studentlist, token: token })
+        return res.status(200).send({ status: true, message: "login successfully", token: token })
 
         //  return  res.status(200).send({status:true,message:token}) 
 
